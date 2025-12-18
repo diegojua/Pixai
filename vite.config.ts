@@ -7,10 +7,6 @@ export default defineConfig(({ mode }) => {
   
   return {
     plugins: [react()],
-    define: {
-      // Substitui apenas a chave específica para evitar sobrescrever o objeto process inteiro
-      'process.env.API_KEY': JSON.stringify(env.API_KEY)
-    },
     server: {
       port: 3000
     }

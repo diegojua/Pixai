@@ -1,7 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-// Initialize the client with the API key from the environment variable
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Helper to get client safely
+const getAiClient = () => {
+  const apiKey = import.meta.env.VITE_API_KEY;
+  if (!apiKey || apiKey.includes('PUT_YOUR_KEY')) {
+    throw new Error("Chave API do Gemini não configurada ou inválida. Verifique o arquivo .env");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 // Helper to strip "data:image/xyz;base64," prefix if present
 const cleanBase64 = (base64Str: string) => {
@@ -42,6 +48,7 @@ export const editImage = async (
         ]
     };
 
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
         model,
         contents,
@@ -102,6 +109,7 @@ export const generateMarketingCopy = async (
     const cleanData = cleanBase64(base64ImageData);
     
     try {
+        const ai = getAiClient();
         const response = await ai.models.generateContent({
             model: "gemini-2.0-flash-001",
             contents: {
